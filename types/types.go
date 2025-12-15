@@ -1,8 +1,8 @@
-package api
+package types
 
 type HNResponse struct {
 	Id          int    `json:"id,omitempty" db:"id,omitempty"`
-	Deleted     string `json:"deleted,omitempty" db:"deleted,omitempty"`
+	Deleted     bool   `json:"deleted,omitempty" db:"deleted,omitempty"`
 	Type        string `json:"type,omitempty" db:"type,omitempty"`
 	By          string `json:"by,omitempty" db:"by,omitempty"`
 	Time        int64  `json:"time,omitempty" db:"time,omitempty"`

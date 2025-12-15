@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/suynep/compilare/types"
 )
 
 const (
@@ -16,6 +18,8 @@ const (
 	HN_ROUTE_NEW_STORIES  = "newstories.json"
 	HN_ROUTE_ITEM_PREFIX  = "item/"
 )
+
+const TEST_LIMIT = 30
 
 func ParseStoriesBody(body []byte) []int {
 	returnList := new([]int)
@@ -65,11 +69,13 @@ func FetchNewStories() []int {
 	return ParseStoriesBody(body)
 }
 
-func GetJsonFromPosts(ids []int) {
+func GetJsonFromPosts(ids []int) []types.HNResponse {
+	fetched := make([]types.HNResponse, 0)
+
 	incompleteUrl, err := url.JoinPath(HN_BASE_URL, HN_ROUTE_ITEM_PREFIX)
 	Check(err)
 
-	ManageEmptyUrls := func(res *HNResponse) {
+	ManageEmptyUrls := func(res *types.HNResponse) {
 		if (*res).Url == "" {
 			(*res).Url = fmt.Sprintf("https://news.ycombinator.com/item?id=%d", (*res).Id)
 		}
@@ -86,10 +92,18 @@ func GetJsonFromPosts(ids []int) {
 		Check(err)
 
 		// fmt.Printf("%v", string(body))
-		hnResponse := new(HNResponse)
+		hnResponse := new(types.HNResponse)
 		json.Unmarshal(body, hnResponse)
 		ManageEmptyUrls(hnResponse)
+		fetched = append(fetched, *hnResponse)
+
+		// TESTING PURPOSES
+		if len(fetched) >= TEST_LIMIT {
+			return fetched
+		}
 		// fmt.Printf("Extracted %d\n%d %s\n%s\n%d\n\n", id, hnResponse.Id, hnResponse.Type, hnResponse.Title, hnResponse.Score)
-		fmt.Printf("%#v", hnResponse)
+		// fmt.Printf("%#v", hnResponse)
 	}
+
+	return fetched
 }
