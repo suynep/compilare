@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/suynep/compilare/api"
+	"github.com/suynep/compilare/database"
 )
 
 func TestFetchBestStories() {
@@ -23,4 +24,14 @@ func TestJsonFetchNewStories() {
 func TestJsonFetchTopStories() {
 	fmt.Printf("Testing Top Stories Mecha\n\n")
 	api.GetJsonFromPosts(api.FetchTopStories())
+}
+
+func TestDatabaseSaves() {
+	fmt.Printf("Testing Best Stories Mecha\n\n")
+	data := api.GetJsonFromPosts(api.FetchBestStories())
+
+	for _, v := range data {
+		fmt.Printf("Saving %s\n", v.Title)
+		database.InsertPost(v)
+	}
 }

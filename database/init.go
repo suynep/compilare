@@ -22,7 +22,7 @@ const (
 		parent INTEGER,
 		poll TEXT,
 		kids TEXT,
-		url TEXT,
+		url TEXT UNIQUE NOT NULL,
 		score INTEGER,
 		title TEXT,
 		parts TEXT,

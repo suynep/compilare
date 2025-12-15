@@ -19,6 +19,8 @@ const (
 	HN_ROUTE_ITEM_PREFIX  = "item/"
 )
 
+const TEST_LIMIT = 30
+
 func ParseStoriesBody(body []byte) []int {
 	returnList := new([]int)
 	json.Unmarshal(body, returnList)
@@ -67,7 +69,9 @@ func FetchNewStories() []int {
 	return ParseStoriesBody(body)
 }
 
-func GetJsonFromPosts(ids []int) {
+func GetJsonFromPosts(ids []int) []types.HNResponse {
+	fetched := make([]types.HNResponse, 0)
+
 	incompleteUrl, err := url.JoinPath(HN_BASE_URL, HN_ROUTE_ITEM_PREFIX)
 	Check(err)
 
@@ -91,7 +95,15 @@ func GetJsonFromPosts(ids []int) {
 		hnResponse := new(types.HNResponse)
 		json.Unmarshal(body, hnResponse)
 		ManageEmptyUrls(hnResponse)
+		fetched = append(fetched, *hnResponse)
+
+		// TESTING PURPOSES
+		if len(fetched) >= TEST_LIMIT {
+			return fetched
+		}
 		// fmt.Printf("Extracted %d\n%d %s\n%s\n%d\n\n", id, hnResponse.Id, hnResponse.Type, hnResponse.Title, hnResponse.Score)
-		fmt.Printf("%#v", hnResponse)
+		// fmt.Printf("%#v", hnResponse)
 	}
+
+	return fetched
 }
