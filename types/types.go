@@ -1,4 +1,4 @@
-package api
+package types
 
 type HNResponse struct {
 	Id          int    `json:"id,omitempty" db:"id,omitempty"`

@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/suynep/compilare/types"
 )
 
 const (
@@ -69,7 +71,7 @@ func GetJsonFromPosts(ids []int) {
 	incompleteUrl, err := url.JoinPath(HN_BASE_URL, HN_ROUTE_ITEM_PREFIX)
 	Check(err)
 
-	ManageEmptyUrls := func(res *HNResponse) {
+	ManageEmptyUrls := func(res *types.HNResponse) {
 		if (*res).Url == "" {
 			(*res).Url = fmt.Sprintf("https://news.ycombinator.com/item?id=%d", (*res).Id)
 		}
@@ -86,7 +88,7 @@ func GetJsonFromPosts(ids []int) {
 		Check(err)
 
 		// fmt.Printf("%v", string(body))
-		hnResponse := new(HNResponse)
+		hnResponse := new(types.HNResponse)
 		json.Unmarshal(body, hnResponse)
 		ManageEmptyUrls(hnResponse)
 		// fmt.Printf("Extracted %d\n%d %s\n%s\n%d\n\n", id, hnResponse.Id, hnResponse.Type, hnResponse.Title, hnResponse.Score)
