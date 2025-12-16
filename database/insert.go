@@ -29,3 +29,12 @@ func InsertPost(post types.HNResponse) {
 		panic(err)
 	}
 }
+
+func InsertPosts(limit int, posts []types.HNResponse) {
+	for i, post := range posts {
+		if i >= limit {
+			break
+		}
+		InsertPost(post)
+	}
+}

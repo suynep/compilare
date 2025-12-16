@@ -35,3 +35,7 @@ func TestDatabaseSaves() {
 		database.InsertPost(v)
 	}
 }
+
+func TestReadForMemoization() {
+	database.ReadForMemoization()
+}

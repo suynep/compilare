@@ -75,3 +75,10 @@ func MustInitDB() {
 		panic(err)
 	}
 }
+
+func Close() error {
+	if db != nil {
+		return db.Close()
+	}
+	return nil
+}
