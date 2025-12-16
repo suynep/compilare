@@ -12,7 +12,8 @@ import (
 const (
 	path             = "./data.db"
 	createPostsTable = `CREATE TABLE IF NOT EXISTS posts(
-		id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+		pid INTEGER NOT NULL,
 		deleted TEXT,
 		type TEXT,
 		by TEXT,
@@ -22,12 +23,14 @@ const (
 		parent INTEGER,
 		poll TEXT,
 		kids TEXT,
-		url TEXT UNIQUE NOT NULL,
+		url TEXT NOT NULL,
 		score INTEGER,
 		title TEXT,
 		parts TEXT,
-		descendants INTEGER
-	);`
+		descendants INTEGER,
+		data_type TEXT NOT NULL,
+    	UNIQUE (pid, url, data_type)
+	);` // data_type can be either of "b", "t", "n" (best, top, new) stories
 )
 
 var (
@@ -74,4 +77,11 @@ func MustInitDB() {
 	if err := InitDB(); err != nil {
 		panic(err)
 	}
+}
+
+func Close() error {
+	if db != nil {
+		return db.Close()
+	}
+	return nil
 }

@@ -6,7 +6,9 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"slices"
 
+	"github.com/suynep/compilare/database"
 	"github.com/suynep/compilare/types"
 )
 
@@ -38,7 +40,19 @@ func FetchBestStories() []int {
 	body, err := io.ReadAll(resp.Body)
 	Check(err)
 
-	return ParseStoriesBody(body)
+	initial := database.ReadForMemoization("b")
+	ids := ParseStoriesBody(body)
+
+	newIds := make([]int, 0)
+	for i := range ids {
+		if !slices.ContainsFunc(initial, func(e types.WebPost) bool {
+			return ids[i] == e.Id
+		}) {
+			newIds = append(newIds, ids[i])
+		}
+	}
+
+	return newIds
 }
 
 func FetchTopStories() []int {
@@ -52,7 +66,19 @@ func FetchTopStories() []int {
 	body, err := io.ReadAll(resp.Body)
 	Check(err)
 
-	return ParseStoriesBody(body)
+	initial := database.ReadForMemoization("t")
+	ids := ParseStoriesBody(body)
+
+	newIds := make([]int, 0)
+	for i := range ids {
+		if !slices.ContainsFunc(initial, func(e types.WebPost) bool {
+			return ids[i] == e.Id
+		}) {
+			newIds = append(newIds, ids[i])
+		}
+	}
+
+	return newIds
 }
 
 func FetchNewStories() []int {
@@ -66,7 +92,19 @@ func FetchNewStories() []int {
 	body, err := io.ReadAll(resp.Body)
 	Check(err)
 
-	return ParseStoriesBody(body)
+	initial := database.ReadForMemoization("n")
+	ids := ParseStoriesBody(body)
+
+	newIds := make([]int, 0)
+	for i := range ids {
+		if !slices.ContainsFunc(initial, func(e types.WebPost) bool {
+			return ids[i] == e.Id
+		}) {
+			newIds = append(newIds, ids[i])
+		}
+	}
+
+	return newIds
 }
 
 func GetJsonFromPosts(ids []int) []types.HNResponse {
