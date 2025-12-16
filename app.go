@@ -9,7 +9,8 @@ func main() {
 	database.MustInitDB() // should be the first call. Always! :)
 	// tests.TestDatabaseSaves()
 	// tests.TestSaveRunTime()
-	tests.TestReadForMemoization()
+	// tests.TestReadForMemoization()
+	tests.TestTopStoriesDatabaseSaves()
 
 	database.Close()
 

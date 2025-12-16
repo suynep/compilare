@@ -26,8 +26,9 @@ const (
 		score INTEGER,
 		title TEXT,
 		parts TEXT,
-		descendants INTEGER
-	);`
+		descendants INTEGER,
+		data_type TEXT
+	);` // data_type can be either of "b", "t", "n" (best, top, new) stories
 )
 
 var (

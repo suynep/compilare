@@ -6,7 +6,7 @@ import (
 	"github.com/suynep/compilare/types"
 )
 
-func ReadForMemoization() []types.WebPost {
+func ReadForMemoization(dataType string) []types.WebPost {
 	/*
 		fetching from the hnews api is expensive;
 		We create the following mechanism:
@@ -15,9 +15,9 @@ func ReadForMemoization() []types.WebPost {
 			- Display the memoized data, instead of expensive calls every run
 	*/
 
-	q := `SELECT id, title, url, by, score, text, time FROM posts ORDER BY time DESC;`
+	q := `SELECT id, title, url, by, score, text, time FROM posts WHERE data_type=? ORDER BY time DESC;`
 
-	rows, err := db.Query(q)
+	rows, err := db.Query(q, dataType)
 
 	if err != nil {
 		panic(err)

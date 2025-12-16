@@ -26,16 +26,25 @@ func TestJsonFetchTopStories() {
 	api.GetJsonFromPosts(api.FetchTopStories())
 }
 
-func TestDatabaseSaves() {
-	fmt.Printf("Testing Best Stories Mecha\n\n")
+func TestBestStoriesDatabaseSaves() {
+	fmt.Printf("Testing Best Stories Save Mecha\n\n")
 	data := api.GetJsonFromPosts(api.FetchBestStories())
 
 	for _, v := range data {
 		fmt.Printf("Saving %s\n", v.Title)
-		database.InsertPost(v)
+		database.InsertPost(v, "b")
+	}
+}
+func TestTopStoriesDatabaseSaves() {
+	fmt.Printf("Testing Top Stories Save Mecha\n\n")
+	data := api.GetJsonFromPosts(api.FetchTopStories())
+
+	for _, v := range data {
+		fmt.Printf("Saving %s\n", v.Title)
+		database.InsertPost(v, "t")
 	}
 }
 
 func TestReadForMemoization() {
-	database.ReadForMemoization()
+	database.ReadForMemoization("t")
 }
