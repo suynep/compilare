@@ -10,6 +10,8 @@ func main() {
 	// tests.TestDatabaseSaves()
 	// tests.TestSaveRunTime()
 	// tests.TestReadForMemoization()
+	tests.TestNewStoriesDatabaseSaves()
+	tests.TestBestStoriesDatabaseSaves()
 	tests.TestTopStoriesDatabaseSaves()
 
 	database.Close()

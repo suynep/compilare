@@ -15,7 +15,7 @@ func ReadForMemoization(dataType string) []types.WebPost {
 			- Display the memoized data, instead of expensive calls every run
 	*/
 
-	q := `SELECT id, title, url, by, score, text, time FROM posts WHERE data_type=? ORDER BY time DESC;`
+	q := `SELECT pid, title, url, by, score, text, time FROM posts WHERE data_type=? ORDER BY time DESC;`
 
 	rows, err := db.Query(q, dataType)
 

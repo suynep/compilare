@@ -6,7 +6,7 @@ func InsertPost(post types.HNResponse, dataType string) {
 	/*
 		How... ugly...  :(
 	*/
-	q := `INSERT OR IGNORE INTO posts (id,deleted,type,by,time,text,dead,parent,poll,url,score,title,parts,descendants, data_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
+	q := `INSERT OR IGNORE INTO posts (pid,deleted,type,by,time,text,dead,parent,poll,url,score,title,parts,descendants, data_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
 
 	_, err := db.Exec(q,
 		post.Id,

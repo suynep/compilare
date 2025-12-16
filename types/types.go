@@ -3,7 +3,7 @@ package types
 import "time"
 
 type HNResponse struct {
-	Id          int    `json:"id,omitempty" db:"id,omitempty"`
+	Id          int    `json:"id,omitempty" db:"pid,omitempty"`
 	Deleted     bool   `json:"deleted,omitempty" db:"deleted,omitempty"`
 	Type        string `json:"type,omitempty" db:"type,omitempty"`
 	By          string `json:"by,omitempty" db:"by,omitempty"`
@@ -30,7 +30,7 @@ type WebPost struct {
 	/*
 		type for displaying the actual data to the web
 	*/
-	Id    int    `json:"id,omitempty" db:"id,omitempty"`
+	Id    int    `json:"id,omitempty" db:"pid,omitempty"`
 	By    string `json:"by,omitempty" db:"by,omitempty"`
 	Url   string `json:"url,omitempty" db:"url,omitempty"`
 	Score int    `json:"score,omitempty" db:"score,omitempty"`
