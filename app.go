@@ -7,13 +7,8 @@ import (
 
 func main() {
 	database.MustInitDB() // should be the first call. Always! :)
-	// tests.TestDatabaseSaves()
-	// tests.TestSaveRunTime()
-	// tests.TestReadForMemoization()
-	tests.TestNewStoriesDatabaseSaves()
-	tests.TestBestStoriesDatabaseSaves()
-	tests.TestTopStoriesDatabaseSaves()
+
+	tests.TestFullFlowRSS()
 
 	database.Close()
-
 }

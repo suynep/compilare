@@ -1,6 +1,9 @@
 package types
 
-import "time"
+import (
+	"encoding/xml"
+	"time"
+)
 
 type HNResponse struct {
 	Id          int    `json:"id,omitempty" db:"pid,omitempty"`
@@ -37,4 +40,21 @@ type WebPost struct {
 	Title string `json:"title,omitempty" db:"title,omitempty"`
 	Time  int64  `json:"time,omitempty" db:"time,omitempty"`
 	Text  string `json:"text,omitempty" db:"text,omitempty"`
+}
+
+type RSS struct {
+	XMLName xml.Name `xml:"rss"`
+	Channel Channel  `xml:"channel"`
+}
+
+type Channel struct {
+	Items []Item `xml:"item"`
+}
+
+type Item struct {
+	Title       string `xml:"title" db:"title,omitempty"`
+	Link        string `xml:"link" db:"link,omitempty"`
+	Creator     string `xml:"http://purl.org/dc/elements/1.1/ creator" db:"creator,omitempty"`
+	PubDate     string `xml:"pubDate" db:"published,omitempty"`
+	Description string `xml:"description" db:"description,omitempty"`
 }
