@@ -7,7 +7,13 @@ import (
 )
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<h1>goland is prettyyyy! Hello, net/html package!</h1>")
+	w.Header().Add("Content-Type", "application/json")
+	fmt.Fprintf(w, "")
+}
+
+func getAllAeonPosts(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	fmt.Fprintf(w)
 }
 
 func RunServer() {
