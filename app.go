@@ -15,5 +15,4 @@ func main() {
 	tests.TestTopStoriesDatabaseSaves()
 
 	database.Close()
-
 }
