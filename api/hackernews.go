@@ -139,8 +139,6 @@ func GetJsonFromPosts(ids []int) []types.HNResponse {
 		if len(fetched) >= TEST_LIMIT {
 			return fetched
 		}
-		// fmt.Printf("Extracted %d\n%d %s\n%s\n%d\n\n", id, hnResponse.Id, hnResponse.Type, hnResponse.Title, hnResponse.Score)
-		// fmt.Printf("%#v", hnResponse)
 	}
 
 	return fetched

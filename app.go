@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/suynep/compilare/database"
-	"github.com/suynep/compilare/tests"
+	"github.com/suynep/compilare/manager"
 )
 
 func main() {
@@ -10,9 +10,7 @@ func main() {
 	// tests.TestDatabaseSaves()
 	// tests.TestSaveRunTime()
 	// tests.TestReadForMemoization()
-	tests.TestNewStoriesDatabaseSaves()
-	tests.TestBestStoriesDatabaseSaves()
-	tests.TestTopStoriesDatabaseSaves()
+	manager.CheckAndSaveLastRunTime()
 
 	database.Close()
 }

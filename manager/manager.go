@@ -2,9 +2,12 @@ package manager
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"os"
 	"time"
 
+	"github.com/suynep/compilare/tests"
 	"github.com/suynep/compilare/types"
 )
 
@@ -13,8 +16,8 @@ import (
 */
 
 const (
-	CONFIG_PATH      = `config.json`
-	STORY_SAVE_DELTA = 0.5 // in minutes (for the time being; just for testing)
+	CONFIG_PATH              = `config.json`
+	STORY_SAVE_DELTA float64 = 3 * 60 // in minutes (for the time being; just for testing)
 )
 
 var (
@@ -35,4 +38,38 @@ func SaveLastRunTime() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func GetConfig(path string) types.Config {
+	data, err := os.ReadFile(path)
+
+	if err != nil {
+		log.Fatalf("Error while reading Config JSON: %v", err)
+	}
+
+	config := new(types.Config)
+	if err = json.Unmarshal(data, config); err != nil {
+		log.Fatalf("Error while Unmarshalling JSON: %v", err)
+	}
+
+	return *config
+}
+
+func CheckAndSaveLastRunTime() {
+	currentTime := time.Now()
+	config := GetConfig(CONFIG_PATH)
+
+	// if the difference is less than the minimum required delta for saving (e.g., say, 0.5 minutes),
+	// update the config file with the new run time.
+	if currentTime.Sub(config.Run.Time).Minutes() <= STORY_SAVE_DELTA {
+		fmt.Printf("Current Delta %.1f does NOT exceed %.1f minutes cap\nWill only save the current run time...\n", currentTime.Sub(config.Run.Time).Minutes(), STORY_SAVE_DELTA)
+	} else {
+		fmt.Printf("Current Delta %.1f DOES exceed %.1f minutes cap\ninitiating database refresh...\n", currentTime.Sub(config.Run.Time).Minutes(), STORY_SAVE_DELTA)
+		// the following test module's functions should be used sparsely as my intent for their creation
+		// is simply to test
+		tests.TestBestStoriesDatabaseSaves()
+		tests.TestNewStoriesDatabaseSaves()
+		tests.TestTopStoriesDatabaseSaves()
+	}
+	SaveLastRunTime()
 }
