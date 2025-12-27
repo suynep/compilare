@@ -7,8 +7,6 @@ import (
 
 func main() {
 	database.MustInitDB() // should be the first call. Always! :)
-
-	tests.TestFullFlowRSS()
-
+	tests.TestWebApiServer()
 	database.Close()
 }
