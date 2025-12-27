@@ -5,6 +5,14 @@ import (
 	"time"
 )
 
+type User struct {
+	Id        int
+	Username  string    `db:"username,omitempty"`
+	Password  string    `db:"password,omitempty"`
+	CreatedAt time.Time `db:"created_at,omitempty"`
+	LastLogin time.Time `db:"last_login,omitempty"`
+}
+
 type HNResponse struct {
 	Id          int    `json:"id,omitempty" db:"pid,omitempty"`
 	Deleted     bool   `json:"deleted,omitempty" db:"deleted,omitempty"`

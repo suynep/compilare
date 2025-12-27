@@ -49,3 +49,33 @@ func FetchBestHackernewsPosts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 	}
 }
+
+func FetchAeonPosts(w http.ResponseWriter, r *http.Request) {
+	trimmed := strings.TrimRight(r.URL.Path, "/")
+
+	if trimmed == "/fetch/aeon" {
+		posts := database.ReadAeonPosts()
+
+		response := map[string]any{
+			"message": "ok",
+			"path":    trimmed,
+			"body":    posts,
+		}
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func FetchPsychePosts(w http.ResponseWriter, r *http.Request) {
+	trimmed := strings.TrimRight(r.URL.Path, "/")
+
+	if trimmed == "/fetch/psyche" {
+		posts := database.ReadPsychePosts()
+
+		response := map[string]any{
+			"message": "ok",
+			"path":    trimmed,
+			"body":    posts,
+		}
+		json.NewEncoder(w).Encode(response)
+	}
+}

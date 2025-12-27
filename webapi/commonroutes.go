@@ -52,15 +52,3 @@ func InfoUniverseHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 	}
 }
-
-func ConnectHandlers() {
-	http.Handle("/", LogMiddleware(http.HandlerFunc(RootHandler)))
-	http.Handle("/info/universe", LogMiddleware(http.HandlerFunc(InfoUniverseHandler)))
-	http.Handle("/info/universe/", LogMiddleware(http.HandlerFunc(InfoUniverseHandler)))
-	http.Handle("/fetch/top", LogMiddleware(http.HandlerFunc(FetchTopHackernewsPosts)))
-	http.Handle("/fetch/top/", LogMiddleware(http.HandlerFunc(FetchTopHackernewsPosts)))
-	http.Handle("/fetch/new/", LogMiddleware(http.HandlerFunc(FetchNewHackernewsPosts)))
-	http.Handle("/fetch/new", LogMiddleware(http.HandlerFunc(FetchNewHackernewsPosts)))
-	http.Handle("/fetch/best/", LogMiddleware(http.HandlerFunc(FetchBestHackernewsPosts)))
-	http.Handle("/fetch/best", LogMiddleware(http.HandlerFunc(FetchBestHackernewsPosts)))
-}

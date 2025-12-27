@@ -64,3 +64,29 @@ func ReadAeonPosts() []types.Item {
 
 	return all
 }
+
+func ReadPsychePosts() []types.Item {
+
+	q := `SELECT title, link, creator, published, description FROM psycheposts;`
+
+	rows, err := db.Query(q)
+
+	if err != nil {
+		panic(err)
+	}
+
+	all := make([]types.Item, 0)
+
+	for rows.Next() {
+		current := new(types.Item)
+		err = rows.Scan(&current.Title, &current.Link, &current.Creator, &current.PubDate, &current.Description)
+
+		if err != nil {
+			log.Fatalf("Error occurred while scanning: %v\n", err)
+		}
+
+		all = append(all, *current)
+	}
+
+	return all
+}

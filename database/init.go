@@ -49,6 +49,15 @@ const (
                 published TEXT,   
                 description TEXT
 	);`
+
+	createUserTable = `CREATE TABLE IF NOT EXISTS users(
+		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+		username TEXT UNIQUE,
+		password TEXT,
+		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+		last_login TEXT,
+
+	)`
 )
 
 var (
@@ -72,14 +81,8 @@ func InitDB() error {
 			return
 		}
 
-		// Enable foreign keys
-		// if _, err = db.Exec(`PRAGMA foreign_keys = ON;`); err != nil {
-		// 	initErr = err
-		// 	return
-		// }
-
 		// Create all tables
-		tables := []string{createPostsTable, createAeonPostsTable, createPsychePostsTable}
+		tables := []string{createPostsTable, createAeonPostsTable, createPsychePostsTable, createUserTable}
 		for _, q := range tables {
 			if _, err = db.Exec(q); err != nil {
 				initErr = fmt.Errorf("failed to create table: %w", err)
