@@ -5,6 +5,7 @@ import (
 
 	"github.com/suynep/compilare/api"
 	"github.com/suynep/compilare/database"
+	"github.com/suynep/compilare/webapi"
 )
 
 func TestFetchBestStories() {
@@ -58,4 +59,8 @@ func TestTopStoriesDatabaseSaves() {
 
 func TestReadForMemoization() {
 	database.ReadForMemoization("t")
+}
+
+func TestWebApiServer() {
+	webapi.Serve()
 }
