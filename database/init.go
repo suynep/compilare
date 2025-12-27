@@ -31,6 +31,24 @@ const (
 		data_type TEXT NOT NULL,
     	UNIQUE (pid, url, data_type)
 	);` // data_type can be either of "b", "t", "n" (best, top, new) stories
+
+	createAeonPostsTable = `CREATE TABLE IF NOT EXISTS aeonposts(
+		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                title TEXT,
+                link  TEXT UNIQUE,     
+                creator TEXT,   
+                published TEXT,   
+                description TEXT
+	);`
+
+	createPsychePostsTable = `CREATE TABLE IF NOT EXISTS psycheposts(
+		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                title TEXT,
+                link  TEXT UNIQUE,     
+                creator TEXT,   
+                published TEXT,   
+                description TEXT
+	);`
 )
 
 var (
@@ -61,7 +79,7 @@ func InitDB() error {
 		// }
 
 		// Create all tables
-		tables := []string{createPostsTable}
+		tables := []string{createPostsTable, createAeonPostsTable, createPsychePostsTable}
 		for _, q := range tables {
 			if _, err = db.Exec(q); err != nil {
 				initErr = fmt.Errorf("failed to create table: %w", err)

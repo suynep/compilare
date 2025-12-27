@@ -59,3 +59,21 @@ func TestTopStoriesDatabaseSaves() {
 func TestReadForMemoization() {
 	database.ReadForMemoization("t")
 }
+
+func TestFetchRSSFile() {
+	api.FetchRSSFile()
+}
+
+func TestParseRSSFile() {
+	fp := "./aeon_feed.rss"
+	api.ParseRSSFile(fp)
+}
+
+func TestSaveRSSPosts() {
+	fp := "./aeon_feed.rss"
+	api.SaveRSSPosts(fp)
+}
+
+func TestFullFlowRSS() {
+	api.FullFlowRSS()
+}

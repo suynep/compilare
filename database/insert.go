@@ -39,3 +39,49 @@ func InsertPosts(limit int, posts []types.HNResponse, dataType string) {
 		InsertPost(post, dataType)
 	}
 }
+
+func InsertAeonPost(post types.Item) {
+	/*
+		title TEXT,
+		link  TEXT,
+		creator TEXT,
+		published TEXT,
+		description TEXT
+	*/
+	q := `INSERT OR IGNORE INTO aeonposts (title,link,creator,published,description) VALUES (?, ?, ?, ?, ?);`
+
+	_, err := db.Exec(q, post.Title, post.Link, post.Creator, post.PubDate, post.Description)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func InsertPsychePost(post types.Item) {
+	/*
+		title TEXT,
+		link  TEXT,
+		creator TEXT,
+		published TEXT,
+		description TEXT
+	*/
+	q := `INSERT OR IGNORE INTO psycheposts (title,link,creator,published,description) VALUES (?, ?, ?, ?, ?);`
+
+	_, err := db.Exec(q, post.Title, post.Link, post.Creator, post.PubDate, post.Description)
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func InsertAeonPosts(posts []types.Item) {
+	for _, post := range posts {
+		InsertAeonPost(post)
+	}
+}
+
+func InsertPsychePosts(posts []types.Item) {
+	for _, post := range posts {
+		InsertPsychePost(post)
+	}
+}
