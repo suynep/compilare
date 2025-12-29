@@ -22,6 +22,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 	if trimmed == "" {
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(http.StatusOK)
 
 		response := map[string]any{
@@ -36,6 +37,7 @@ func InfoUniverseHandler(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 	if trimmed == "/info/universe" {
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(http.StatusOK)
 
 		response := map[string]any{

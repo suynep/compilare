@@ -55,8 +55,7 @@ const (
 		username TEXT UNIQUE,
 		password TEXT,
 		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-		last_login TEXT,
-
+		last_login TEXT
 	)`
 )
 

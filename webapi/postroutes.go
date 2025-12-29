@@ -11,6 +11,9 @@ import (
 func FetchTopHackernewsPosts(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 	if trimmed == "/fetch/top" {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
 		posts := database.ReadForMemoization("t")
 
 		response := map[string]any{
@@ -25,6 +28,9 @@ func FetchTopHackernewsPosts(w http.ResponseWriter, r *http.Request) {
 func FetchNewHackernewsPosts(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 	if trimmed == "/fetch/new" {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
 		posts := database.ReadForMemoization("n")
 
 		response := map[string]any{
@@ -39,6 +45,9 @@ func FetchNewHackernewsPosts(w http.ResponseWriter, r *http.Request) {
 func FetchBestHackernewsPosts(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 	if trimmed == "/fetch/best" {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
 		posts := database.ReadForMemoization("b")
 
 		response := map[string]any{
@@ -54,6 +63,9 @@ func FetchAeonPosts(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 
 	if trimmed == "/fetch/aeon" {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
 		posts := database.ReadAeonPosts()
 
 		response := map[string]any{
@@ -69,6 +81,9 @@ func FetchPsychePosts(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 
 	if trimmed == "/fetch/psyche" {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
 		posts := database.ReadPsychePosts()
 
 		response := map[string]any{

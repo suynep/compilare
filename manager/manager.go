@@ -71,7 +71,6 @@ func CheckAndSaveLastRunTime() {
 		tests.TestBestStoriesDatabaseSaves()
 		tests.TestNewStoriesDatabaseSaves()
 		tests.TestTopStoriesDatabaseSaves()
-
 		api.FullFlowRSS()
 	}
 	SaveLastRunTime()
