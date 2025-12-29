@@ -94,3 +94,18 @@ func FetchPsychePosts(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 	}
 }
+
+func AuthTestRoute(w http.ResponseWriter, r *http.Request) {
+	trimmed := strings.TrimRight(r.URL.Path, "/")
+	if trimmed == "/test/auth" {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
+
+		response := map[string]any{
+			"message": "Authentication Successful!",
+		}
+
+		json.NewEncoder(w).Encode(response)
+	}
+}

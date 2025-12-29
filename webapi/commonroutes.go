@@ -3,19 +3,9 @@ package webapi
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
-	"time"
 )
-
-func LogMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		startTime := time.Now()
-		next.ServeHTTP(w, r)
-		log.Printf("[%s] %s %s %s\n", r.Method, r.URL.Path, time.Since(startTime), r.RemoteAddr)
-	})
-}
 
 // root(/) handler
 func RootHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,11 +34,13 @@ func InfoUniverseHandler(w http.ResponseWriter, r *http.Request) {
 			"message": fmt.Sprintf("Welcome to %s route! The functionalities of this api are list under \"functionalities\"", r.URL.Path),
 			"path":    r.URL.Path,
 			"functionalities": map[string]string{
-				"/fetch/new/":    "fetch new posts from hackernews",
-				"/fetch/top/":    "fetch top posts from hackernews",
-				"/fetch/best/":   "fetch best posts from hackernews",
-				"/fetch/aeon/":   "fetch posts from aeon.co",
-				"/fetch/psyche/": "fetch posts from psyche.co",
+				"/fetch/new/":     "fetch new posts from hackernews",
+				"/fetch/top/":     "fetch top posts from hackernews",
+				"/fetch/best/":    "fetch best posts from hackernews",
+				"/fetch/aeon/":    "fetch posts from aeon.co",
+				"/fetch/psyche/":  "fetch posts from psyche.co",
+				"/auth/register/": "user registration; expects `username`, `email`, `password`",
+				"/test/auth/":     "test for GO_SESSION_ID implementation",
 			},
 		}
 		json.NewEncoder(w).Encode(response)

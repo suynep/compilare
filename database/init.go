@@ -54,9 +54,20 @@ const (
 		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 		username TEXT UNIQUE,
 		password TEXT,
+		email TEXT UNIQUE,
 		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 		last_login TEXT
-	)`
+	);`
+
+	createSessionTable = `CREATE TABLE IF NOT EXISTS sessions(
+		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+		u_id INTEGER,
+		session_key TEXT,
+
+		FOREIGN KEY (u_id) REFERENCES users(id),
+
+		UNIQUE (u_id, session_key)
+	);`
 )
 
 var (
@@ -81,7 +92,7 @@ func InitDB() error {
 		}
 
 		// Create all tables
-		tables := []string{createPostsTable, createAeonPostsTable, createPsychePostsTable, createUserTable}
+		tables := []string{createPostsTable, createAeonPostsTable, createPsychePostsTable, createUserTable, createSessionTable}
 		for _, q := range tables {
 			if _, err = db.Exec(q); err != nil {
 				initErr = fmt.Errorf("failed to create table: %w", err)
