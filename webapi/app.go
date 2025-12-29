@@ -29,6 +29,9 @@ func ConnectHandlers() {
 	http.Handle("/fetch/psyche", LogMiddleware(http.HandlerFunc(FetchPsychePosts)))
 	http.Handle("/fetch/psyche/", LogMiddleware(http.HandlerFunc(FetchPsychePosts)))
 
+	http.Handle("/auth/register", LogMiddleware(http.HandlerFunc(RegistrationHandler)))
+	http.Handle("/auth/register/", LogMiddleware(http.HandlerFunc(RegistrationHandler)))
+
 	http.Handle("/test/auth/", AuthMiddleware(http.HandlerFunc(AuthTestRoute)))
 	http.Handle("/test/auth", AuthMiddleware(http.HandlerFunc(AuthTestRoute)))
 }
