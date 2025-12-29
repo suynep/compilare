@@ -22,6 +22,7 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 	if trimmed == "" {
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(http.StatusOK)
 
 		response := map[string]any{
@@ -36,6 +37,7 @@ func InfoUniverseHandler(w http.ResponseWriter, r *http.Request) {
 	trimmed := strings.TrimRight(r.URL.Path, "/")
 	if trimmed == "/info/universe" {
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.WriteHeader(http.StatusOK)
 
 		response := map[string]any{
@@ -51,16 +53,4 @@ func InfoUniverseHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		json.NewEncoder(w).Encode(response)
 	}
-}
-
-func ConnectHandlers() {
-	http.Handle("/", LogMiddleware(http.HandlerFunc(RootHandler)))
-	http.Handle("/info/universe", LogMiddleware(http.HandlerFunc(InfoUniverseHandler)))
-	http.Handle("/info/universe/", LogMiddleware(http.HandlerFunc(InfoUniverseHandler)))
-	http.Handle("/fetch/top", LogMiddleware(http.HandlerFunc(FetchTopHackernewsPosts)))
-	http.Handle("/fetch/top/", LogMiddleware(http.HandlerFunc(FetchTopHackernewsPosts)))
-	http.Handle("/fetch/new/", LogMiddleware(http.HandlerFunc(FetchNewHackernewsPosts)))
-	http.Handle("/fetch/new", LogMiddleware(http.HandlerFunc(FetchNewHackernewsPosts)))
-	http.Handle("/fetch/best/", LogMiddleware(http.HandlerFunc(FetchBestHackernewsPosts)))
-	http.Handle("/fetch/best", LogMiddleware(http.HandlerFunc(FetchBestHackernewsPosts)))
 }

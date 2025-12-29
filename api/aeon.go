@@ -103,5 +103,4 @@ func FullFlowRSS() {
 	for _, fp := range ALL_FEEDS {
 		SaveRSSPosts(fp)
 	}
-
 }

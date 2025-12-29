@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/suynep/compilare/api"
 	"github.com/suynep/compilare/tests"
 	"github.com/suynep/compilare/types"
 )
@@ -17,7 +18,7 @@ import (
 
 const (
 	CONFIG_PATH              = `config.json`
-	STORY_SAVE_DELTA float64 = 3 * 60 // in minutes (for the time being; just for testing)
+	STORY_SAVE_DELTA float64 = 2 * 60 // in minutes (for the time being; just for testing)
 )
 
 var (
@@ -70,6 +71,7 @@ func CheckAndSaveLastRunTime() {
 		tests.TestBestStoriesDatabaseSaves()
 		tests.TestNewStoriesDatabaseSaves()
 		tests.TestTopStoriesDatabaseSaves()
+		api.FullFlowRSS()
 	}
 	SaveLastRunTime()
 }

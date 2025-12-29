@@ -63,6 +63,8 @@ func TestReadForMemoization() {
 
 func TestWebApiServer() {
 	webapi.Serve()
+}
+
 func TestFetchRSSFile() {
 	api.FetchRSSFile()
 }
