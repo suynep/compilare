@@ -6,3 +6,6 @@ test_*
 
 # !IMPORTANT: db files
 *.db
+
+# manager config
+config.json
