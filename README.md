@@ -5,8 +5,11 @@ Compilare is latin for *to compile*: exactly what compilare does in essence -- c
 
 # Setup
 
-Required:
+## Required:
+
 - [go](https://go.dev/doc/install) `>=1.25`
+
+## Local
 
 ```bash
 git clone https://github.com/suynep/compilare
@@ -14,7 +17,7 @@ cd compilare/
 go run .
 ```
 
-The API runs at `localhost:61666` (an arbitrary port choice: perhaps an acknowledgement to the devil within)
+> The API runs at `localhost:61666` (an arbitrary port choice: perhaps an acknowledgement to the devil within)
 
 
 ### Todo
