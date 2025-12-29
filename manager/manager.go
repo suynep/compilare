@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/suynep/compilare/api"
-	"github.com/suynep/compilare/tests"
 	"github.com/suynep/compilare/types"
 )
 
@@ -66,11 +65,9 @@ func CheckAndSaveLastRunTime() {
 		fmt.Printf("Current Delta %.1f does NOT exceed %.1f minutes cap\nWill only save the current run time...\n", currentTime.Sub(config.Run.Time).Minutes(), STORY_SAVE_DELTA)
 	} else {
 		fmt.Printf("Current Delta %.1f DOES exceed %.1f minutes cap\ninitiating database refresh...\n", currentTime.Sub(config.Run.Time).Minutes(), STORY_SAVE_DELTA)
-		// the following test module's functions should be used sparsely as my intent for their creation
-		// is simply to test
-		tests.TestBestStoriesDatabaseSaves()
-		tests.TestNewStoriesDatabaseSaves()
-		tests.TestTopStoriesDatabaseSaves()
+		api.SaveTopStoriesDatabase()
+		api.SaveBestStoriesDatabase()
+		api.SaveNewStoriesDatabase()
 		api.FullFlowRSS()
 	}
 	SaveLastRunTime()

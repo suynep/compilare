@@ -1,9 +1,12 @@
 package webapi
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 )
+
+const PORT = `61666`
 
 func ConnectHandlers() {
 	http.Handle("/", LogMiddleware(http.HandlerFunc(RootHandler)))
@@ -23,7 +26,8 @@ func ConnectHandlers() {
 
 func Serve() {
 	ConnectHandlers()
-	if err := http.ListenAndServe(":61666", nil); err != nil {
+	log.Printf("Server running at %s...\n", PORT)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", PORT), nil); err != nil {
 		log.Fatalf("Error occurred while starting http server: %v", err)
 	}
 }

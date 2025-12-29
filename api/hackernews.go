@@ -143,3 +143,37 @@ func GetJsonFromPosts(ids []int) []types.HNResponse {
 
 	return fetched
 }
+
+/*
+	Funcs to save fetched data to the db
+*/
+
+func SaveBestStoriesDatabase() {
+	fmt.Printf("\n\nTesting Best Stories Save Mecha\n\n")
+	data := GetJsonFromPosts(FetchBestStories())
+
+	for _, v := range data {
+		fmt.Printf("Saving %s\n", v.Title)
+		database.InsertPost(v, "b")
+	}
+}
+
+func SaveNewStoriesDatabase() {
+	fmt.Printf("\n\nTesting New Stories Save Mecha\n\n")
+	data := GetJsonFromPosts(FetchNewStories())
+
+	for _, v := range data {
+		fmt.Printf("Saving %s\n", v.Title)
+		database.InsertPost(v, "n")
+	}
+}
+
+func SaveTopStoriesDatabase() {
+	fmt.Printf("\n\nTesting Top Stories Save Mecha\n\n")
+	data := GetJsonFromPosts(FetchTopStories())
+
+	for _, v := range data {
+		fmt.Printf("Saving %s\n", v.Title)
+		database.InsertPost(v, "t")
+	}
+}
