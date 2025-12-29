@@ -4,7 +4,14 @@ import (
 	"time"
 )
 
+type LoginUser struct {
+	Id       int64  `db:"id,omitempty"`
+	Username string `db:"username,omitempty"`
+	Password string `db:"password,omitempty"`
+}
+
 type RegisterUser struct {
+	Id       int64  `db:"id,omitempty"`
 	Username string `db:"username,omitempty"`
 	Password string `db:"password,omitempty"`
 	Email    string `db:"email,omitempty"`

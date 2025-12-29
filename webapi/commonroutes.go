@@ -34,11 +34,13 @@ func InfoUniverseHandler(w http.ResponseWriter, r *http.Request) {
 			"message": fmt.Sprintf("Welcome to %s route! The functionalities of this api are list under \"functionalities\"", r.URL.Path),
 			"path":    r.URL.Path,
 			"functionalities": map[string]string{
-				"/fetch/new/":    "fetch new posts from hackernews",
-				"/fetch/top/":    "fetch top posts from hackernews",
-				"/fetch/best/":   "fetch best posts from hackernews",
-				"/fetch/aeon/":   "fetch posts from aeon.co",
-				"/fetch/psyche/": "fetch posts from psyche.co",
+				"/fetch/new/":     "fetch new posts from hackernews",
+				"/fetch/top/":     "fetch top posts from hackernews",
+				"/fetch/best/":    "fetch best posts from hackernews",
+				"/fetch/aeon/":    "fetch posts from aeon.co",
+				"/fetch/psyche/":  "fetch posts from psyche.co",
+				"/auth/register/": "user registration; expects `username`, `email`, `password`",
+				"/test/auth/":     "test for GO_SESSION_ID implementation",
 			},
 		}
 		json.NewEncoder(w).Encode(response)
