@@ -5,6 +5,12 @@ import (
 	"time"
 )
 
+type RegisterUser struct {
+	Username string
+	Password string
+	Email    string
+}
+
 type User struct {
 	Id        int
 	Username  string    `db:"username,omitempty"`
