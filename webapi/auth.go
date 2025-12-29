@@ -37,7 +37,7 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		u_id, err := database.InsertUser(*regUser)
+		_, err = database.InsertUser(*regUser)
 
 		if err != nil {
 			response := map[string]string{"message": "Username or Email already exists"}
@@ -46,15 +46,6 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 			return
 
 		}
-
-		newSession := types.Session{
-			SessionKey: uuid.NewString(),
-			UserId:     int(u_id),
-		}
-
-		_ = database.InsertSession(newSession)
-
-		w.Header().Add("Set-Cookie", fmt.Sprintf("%s=%s", COOKIE_NAME, newSession.SessionKey))
 
 		response := map[string]string{
 			"message": "Registration Successful!",
@@ -109,16 +100,17 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if regUser.Password == loginUser.Password {
-			session, err := database.GetSessionByUserId(regUser.Id)
-			if err != nil {
-				response := map[string]string{"message": "No user session exists in the db."}
-				w.WriteHeader(http.StatusPreconditionFailed)
-				json.NewEncoder(w).Encode(response)
-				return
+			newSession := types.Session{
+				SessionKey: uuid.NewString(),
+				UserId:     int(regUser.Id),
 			}
-			response := map[string]string{"message": "Login Successful", "session_key": session.SessionKey}
-			w.Header().Add("Set-Cookie", fmt.Sprintf("%s=%s", COOKIE_NAME, session.SessionKey))
+
+			_ = database.InsertSession(newSession)
+			w.Header().Add("Set-Cookie", fmt.Sprintf("%s=%s", COOKIE_NAME, newSession.SessionKey))
+			response := map[string]string{"message": "Login Successful", "session_key": newSession.SessionKey}
+
 			json.NewEncoder(w).Encode(response)
+
 		} else {
 			response := map[string]string{"message": "Login Failed"}
 			w.WriteHeader(http.StatusForbidden)
@@ -139,5 +131,54 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 
 		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	if r.Method == "GET" {
+		if r.Header.Get("X-User") != "" {
+			user, err := database.GetUserByUsername(r.Header.Get("X-User"))
+			if err != nil {
+				response := map[string]string{
+					"message": "Error while fetching User from DB",
+				}
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(response)
+			}
+
+			// session, err := database.GetSessionByUserId(user.Id)
+			// if err != nil {
+			// 	response := map[string]string{
+			// 		"message": "Error while fetching Session from DB",
+			// 	}
+			// 	w.WriteHeader(http.StatusBadRequest)
+			// 	json.NewEncoder(w).Encode(response)
+			// }
+			sessionKey, err := r.Cookie("GO_SESSION_ID")
+			if err != nil {
+				response := map[string]string{
+					"message": "No authentication details provided!",
+				}
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(response)
+			}
+			session := types.Session{
+				SessionKey: sessionKey.Value,
+				UserId:     int(user.Id),
+			}
+
+			err = database.RemoveSession(session)
+
+			if err != nil {
+				log.Printf("Error while deleting session from DB")
+			}
+		} else {
+			response := map[string]string{
+				"message": "Error while logging out",
+			}
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(response)
+		}
 	}
 }

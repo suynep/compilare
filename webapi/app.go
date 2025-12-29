@@ -35,6 +35,9 @@ func ConnectHandlers() {
 	http.Handle("/auth/login", LogMiddleware(http.HandlerFunc(LoginHandler)))
 	http.Handle("/auth/login/", LogMiddleware(http.HandlerFunc(LoginHandler)))
 
+	http.Handle("/auth/logout", LogMiddleware(AuthMiddleware(http.HandlerFunc(LogoutHandler))))
+	http.Handle("/auth/logout/", LogMiddleware(AuthMiddleware(http.HandlerFunc(LogoutHandler))))
+
 	http.Handle("/test/auth/", AuthMiddleware(http.HandlerFunc(AuthTestRoute)))
 	http.Handle("/test/auth", AuthMiddleware(http.HandlerFunc(AuthTestRoute)))
 }

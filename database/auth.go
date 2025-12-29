@@ -111,3 +111,15 @@ func GetUserById(id int64) (types.RegisterUser, error) {
 	return *user, nil
 
 }
+
+func RemoveSession(session types.Session) error {
+	q := `DELETE FROM sessions WHERE session_key=? AND u_id=?;`
+
+	_, err := db.Exec(q, session.SessionKey, session.UserId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

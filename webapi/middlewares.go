@@ -46,7 +46,5 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		w.Header().Add("X-User", user.Username)
 
 		next.ServeHTTP(w, r)
-
-		log.Printf("Session Id Received: %s", goSessionId.Value)
 	})
 }
