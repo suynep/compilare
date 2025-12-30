@@ -63,6 +63,7 @@ const (
 		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 		u_id INTEGER,
 		session_key TEXT,
+		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
 		FOREIGN KEY (u_id) REFERENCES users(id),
 

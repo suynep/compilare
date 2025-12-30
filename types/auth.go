@@ -26,6 +26,7 @@ type User struct {
 }
 
 type Session struct {
-	SessionKey string `db:"session_key" json:"session_key"`
-	UserId     int    `db:"u_id" json:"user_id"`
+	SessionKey string    `db:"session_key" json:"session_key"`
+	UserId     int       `db:"u_id" json:"user_id"`
+	CreatedAt  time.Time `db:"created_at" json:"created_at"`
 }
