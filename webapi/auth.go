@@ -99,7 +99,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if regUser.Password == loginUser.Password {
+		check, err := crypt.CheckPassword(*loginUser)
+
+		if err != nil {
+			response := map[string]string{"message": "Login Failed"}
+			w.WriteHeader(http.StatusForbidden)
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		if check {
 			newSession := types.Session{
 				SessionKey: uuid.NewString(),
 				UserId:     int(regUser.Id),
@@ -147,14 +156,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 				json.NewEncoder(w).Encode(response)
 			}
 
-			// session, err := database.GetSessionByUserId(user.Id)
-			// if err != nil {
-			// 	response := map[string]string{
-			// 		"message": "Error while fetching Session from DB",
-			// 	}
-			// 	w.WriteHeader(http.StatusBadRequest)
-			// 	json.NewEncoder(w).Encode(response)
-			// }
 			sessionKey, err := r.Cookie("GO_SESSION_ID")
 			if err != nil {
 				response := map[string]string{
@@ -173,6 +174,13 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Printf("Error while deleting session from DB")
 			}
+
+			response := map[string]string{
+				"message": "Logout Successful",
+			}
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(response)
+
 		} else {
 			response := map[string]string{
 				"message": "Error while logging out",
