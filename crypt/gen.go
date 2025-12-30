@@ -3,6 +3,9 @@ package crypt
 import (
 	"crypto/sha256"
 	"fmt"
+
+	"github.com/suynep/compilare/database"
+	"github.com/suynep/compilare/types"
 )
 
 func GenerateSessionKey(salt string) {
@@ -17,4 +20,18 @@ func HashPassword(password string) string {
 	bs := h.Sum(nil)
 
 	return fmt.Sprintf("%x", bs)
+}
+
+func CheckPassword(user types.LoginUser) (bool, error) {
+	regUser, err := database.GetUserByUsername(user.Username)
+
+	if err != nil {
+		return false, err
+	}
+
+	if HashPassword(user.Password) == regUser.Password {
+		return true, nil
+	}
+
+	return false, nil
 }
