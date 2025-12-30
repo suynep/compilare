@@ -1,6 +1,10 @@
 package database
 
-import "github.com/suynep/compilare/types"
+import (
+	"log"
+
+	"github.com/suynep/compilare/types"
+)
 
 func InsertPost(post types.HNResponse, dataType string) {
 	/*
@@ -84,4 +88,46 @@ func InsertPsychePosts(posts []types.Item) {
 	for _, post := range posts {
 		InsertPsychePost(post)
 	}
+}
+
+func FavoriteHackernewsPost(postId int64, user types.RegisterUser) error {
+	q := `INSERT OR IGNORE INTO hackernewsfavorites (u_id, p_id) VALUES (?, ?)`
+
+	_, err := db.Exec(q, user.Id, postId)
+
+	if err != nil {
+		log.Printf("Couldn't insert into hackernews favorites table: %v", err)
+		return err
+	}
+
+	log.Printf("Favorites added successfully: hn post %d for user %d", postId, user.Id)
+	return nil
+}
+
+func FavoriteAeonPost(postId int64, user types.RegisterUser) error {
+	q := `INSERT OR IGNORE INTO aeonfavorites (u_id, p_id) VALUES (?, ?)`
+
+	_, err := db.Exec(q, user.Id, postId)
+
+	if err != nil {
+		log.Printf("Couldn't insert into aeon favorites table: %v", err)
+		return err
+	}
+
+	log.Printf("Favorites added successfully: aeon post %d for user %d", postId, user.Id)
+	return nil
+}
+
+func FavoritePsychePost(postId int64, user types.RegisterUser) error {
+	q := `INSERT OR IGNORE INTO psychefavorites (u_id, p_id) VALUES (?, ?)`
+
+	_, err := db.Exec(q, user.Id, postId)
+
+	if err != nil {
+		log.Printf("Couldn't insert into psyche favorites table: %v", err)
+		return err
+	}
+
+	log.Printf("Favorites added successfully: psyche post %d for user %d", postId, user.Id)
+	return nil
 }

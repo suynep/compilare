@@ -1,5 +1,5 @@
 package utils
 
 const (
-	SESSION_EXPIRATION_DELTA = 0.5 // in minutes
+	SESSION_EXPIRATION_DELTA = 15.0 // in minutes
 )

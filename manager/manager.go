@@ -17,7 +17,7 @@ import (
 
 const (
 	CONFIG_PATH              = `config.json`
-	STORY_SAVE_DELTA float64 = 2 * 60 // in minutes (for the time being; just for testing)
+	STORY_SAVE_DELTA float64 = 24 * 60 // in minutes (for the time being; just for testing)
 )
 
 var (

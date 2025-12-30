@@ -52,6 +52,7 @@ type Channel struct {
 }
 
 type Item struct {
+	Id          int    `db:"id,omitempty"`
 	Title       string `xml:"title" db:"title,omitempty"`
 	Link        string `xml:"link" db:"link,omitempty"`
 	Creator     string `xml:"http://purl.org/dc/elements/1.1/ creator" db:"creator,omitempty"`
