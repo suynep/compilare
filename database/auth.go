@@ -75,7 +75,6 @@ func GetSessionByKey(key string) (types.Session, error) {
 	}
 
 	return *session, nil
-
 }
 
 func GetSessionByUserId(u_id int64) (types.Session, error) {
@@ -92,7 +91,6 @@ func GetSessionByUserId(u_id int64) (types.Session, error) {
 	}
 
 	return *session, nil
-
 }
 
 func GetUserById(id int64) (types.RegisterUser, error) {
@@ -109,7 +107,6 @@ func GetUserById(id int64) (types.RegisterUser, error) {
 	}
 
 	return *user, nil
-
 }
 
 func RemoveSession(session types.Session) error {
