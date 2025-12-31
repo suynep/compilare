@@ -65,10 +65,10 @@ func CheckAndSaveLastRunTime() {
 		fmt.Printf("Current Delta %.1f does NOT exceed %.1f minutes cap\nWill only save the current run time...\n", currentTime.Sub(config.Run.Time).Minutes(), STORY_SAVE_DELTA)
 	} else {
 		fmt.Printf("Current Delta %.1f DOES exceed %.1f minutes cap\ninitiating database refresh...\n", currentTime.Sub(config.Run.Time).Minutes(), STORY_SAVE_DELTA)
-		api.SaveTopStoriesDatabase()
-		api.SaveBestStoriesDatabase()
-		api.SaveNewStoriesDatabase()
-		api.FullFlowRSS()
+		go api.SaveTopStoriesDatabase()
+		go api.SaveBestStoriesDatabase()
+		go api.SaveNewStoriesDatabase()
+		go api.FullFlowRSS()
 	}
 	SaveLastRunTime()
 }

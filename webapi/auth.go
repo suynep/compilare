@@ -41,6 +41,7 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 		_, err = database.InsertUser(*regUser)
 
 		if err != nil {
+			log.Printf("\nError while inserting user: %v\n", err)
 			response := map[string]string{"message": "Username or Email already exists"}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(response)

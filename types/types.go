@@ -52,10 +52,10 @@ type Channel struct {
 }
 
 type Item struct {
-	Id          int    `db:"id,omitempty"`
-	Title       string `xml:"title" db:"title,omitempty"`
-	Link        string `xml:"link" db:"link,omitempty"`
-	Creator     string `xml:"http://purl.org/dc/elements/1.1/ creator" db:"creator,omitempty"`
-	PubDate     string `xml:"pubDate" db:"published,omitempty"`
-	Description string `xml:"description" db:"description,omitempty"`
+	Id          int    `db:"id,omitempty" json:"id,omitempty"`
+	Title       string `xml:"title" db:"title,omitempty" json:"title,omitempty"`
+	Link        string `xml:"link" db:"link,omitempty" json:"link,omitempty"`
+	Creator     string `xml:"http://purl.org/dc/elements/1.1/ creator" db:"creator,omitempty" json:"creator,omitempty"`
+	PubDate     string `xml:"pubDate" db:"published,omitempty" json:"published_date,omitempty"`
+	Description string `xml:"description" db:"description,omitempty" json:"description,omitempty"`
 }

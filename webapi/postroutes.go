@@ -3,6 +3,7 @@ package webapi
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -120,6 +121,7 @@ func FavoriteHackernewsPost(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(strId)
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusBadRequest)
 			response := map[string]string{
 				"message": fmt.Sprintf("%s is not a valid integer", strId),
@@ -132,6 +134,7 @@ func FavoriteHackernewsPost(w http.ResponseWriter, r *http.Request) {
 		sessionKey, err := r.Cookie("GO_SESSION_ID")
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "No Authentication",
@@ -143,6 +146,7 @@ func FavoriteHackernewsPost(w http.ResponseWriter, r *http.Request) {
 		session, err := database.GetSessionByKey(sessionKey.Value)
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "No such session!",
@@ -154,6 +158,7 @@ func FavoriteHackernewsPost(w http.ResponseWriter, r *http.Request) {
 		currentUser, err := database.GetUserById(int64(session.UserId))
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "Invalid Credentials",
@@ -162,7 +167,32 @@ func FavoriteHackernewsPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// fetch and check (two targets, one arrow)
+		post, err := database.ReadHackernewsPost(int64(id))
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "The post doesn't seem to exist...",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		// marshalledPostForBody, err := json.Marshal(post)
+
+		// if err != nil {
+		// 	log.Printf("\nError: %v\n", err)
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	response := map[string]string{
+		// 		"message": "Error while parsing post JSON",
+		// 	}
+		// 	json.NewEncoder(w).Encode(response)
+		// 	return
+		// }
+
 		if err = database.FavoriteHackernewsPost(int64(id), currentUser); err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusBadRequest)
 			response := map[string]string{
 				"message": "Error while inserting favorites to DB",
@@ -172,8 +202,9 @@ func FavoriteHackernewsPost(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		response := map[string]string{
+		response := map[string]any{
 			"message": "Favorite successful",
+			"post":    post,
 		}
 		json.NewEncoder(w).Encode(response)
 	}
@@ -187,6 +218,7 @@ func FavoritePsychePost(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(strId)
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusBadRequest)
 			response := map[string]string{
 				"message": fmt.Sprintf("%s is not a valid integer", strId),
@@ -199,6 +231,7 @@ func FavoritePsychePost(w http.ResponseWriter, r *http.Request) {
 		sessionKey, err := r.Cookie("GO_SESSION_ID")
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "No Authentication",
@@ -210,6 +243,7 @@ func FavoritePsychePost(w http.ResponseWriter, r *http.Request) {
 		session, err := database.GetSessionByKey(sessionKey.Value)
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "No such session!",
@@ -221,6 +255,7 @@ func FavoritePsychePost(w http.ResponseWriter, r *http.Request) {
 		currentUser, err := database.GetUserById(int64(session.UserId))
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "Invalid Credentials",
@@ -229,7 +264,20 @@ func FavoritePsychePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// fetch and check (two targets, one arrow)
+		post, err := database.ReadPsychePost(int64(id))
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "The post doesn't seem to exist...",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
 		if err = database.FavoritePsychePost(int64(id), currentUser); err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusBadRequest)
 			response := map[string]string{
 				"message": "Error while inserting favorites to DB",
@@ -237,9 +285,11 @@ func FavoritePsychePost(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(response)
 			return
 		}
+
 		w.WriteHeader(http.StatusOK)
-		response := map[string]string{
+		response := map[string]any{
 			"message": "Favorite successful",
+			"post":    post,
 		}
 		json.NewEncoder(w).Encode(response)
 	}
@@ -252,6 +302,7 @@ func FavoriteAeonPost(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(strId)
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusBadRequest)
 			response := map[string]string{
 				"message": fmt.Sprintf("%s is not a valid integer", strId),
@@ -264,6 +315,7 @@ func FavoriteAeonPost(w http.ResponseWriter, r *http.Request) {
 		sessionKey, err := r.Cookie("GO_SESSION_ID")
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "No Authentication",
@@ -275,6 +327,7 @@ func FavoriteAeonPost(w http.ResponseWriter, r *http.Request) {
 		session, err := database.GetSessionByKey(sessionKey.Value)
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "No such session!",
@@ -286,6 +339,7 @@ func FavoriteAeonPost(w http.ResponseWriter, r *http.Request) {
 		currentUser, err := database.GetUserById(int64(session.UserId))
 
 		if err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusForbidden)
 			response := map[string]string{
 				"message": "Invalid Credentials",
@@ -294,7 +348,20 @@ func FavoriteAeonPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// fetch and check (two targets, one arrow)
+		post, err := database.ReadAeonPost(int64(id))
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "The post doesn't seem to exist...",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
 		if err = database.FavoriteAeonPost(int64(id), currentUser); err != nil {
+			log.Printf("\nError: %v\n", err)
 			w.WriteHeader(http.StatusBadRequest)
 			response := map[string]string{
 				"message": "Error while inserting favorites to DB",
@@ -303,8 +370,9 @@ func FavoriteAeonPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		response := map[string]string{
+		response := map[string]any{
 			"message": "Favorite successful",
+			"post":    post,
 		}
 		json.NewEncoder(w).Encode(response)
 	}

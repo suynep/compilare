@@ -42,9 +42,11 @@ func ReadForMemoization(dataType string) []types.WebPost {
 func ReadHackernewsPost(id int64) (types.WebPost, error) {
 	q := `SELECT pid, title, url, by, score, text, time FROM posts WHERE id=?;`
 
-	rows, err := db.Query(q, id)
+	row := db.QueryRow(q, id)
+
 	current := new(types.WebPost)
-	err = rows.Scan(&current.Id, &current.Title, &current.Url, &current.By, &current.Score, &current.Text, &current.Time)
+
+	err := row.Scan(&current.Id, &current.Title, &current.Url, &current.By, &current.Score, &current.Text, &current.Time)
 
 	if err != nil {
 		return *current, err
@@ -82,6 +84,7 @@ func ReadAeonPost(id int64) (types.Item, error) {
 	q := `SELECT id, title, link, creator, published, description FROM aeonposts WHERE id=?;`
 
 	row := db.QueryRow(q, id)
+
 	post := new(types.Item)
 
 	err := row.Scan(&post.Id, &post.Title, &post.Link, &post.Creator, &post.PubDate, &post.Description)
@@ -123,6 +126,7 @@ func ReadPsychePost(id int64) (types.Item, error) {
 	q := `SELECT id, title, link, creator, published, description FROM psycheposts WHERE id=?;`
 
 	row := db.QueryRow(q, id)
+
 	post := new(types.Item)
 
 	err := row.Scan(&post.Id, &post.Title, &post.Link, &post.Creator, &post.PubDate, &post.Description)

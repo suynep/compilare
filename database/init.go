@@ -65,7 +65,7 @@ const (
 		session_key TEXT,
 		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
-		FOREIGN KEY (u_id) REFERENCES users(id),
+		FOREIGN KEY (u_id) REFERENCES users(id) ON DELETE CASCADE,
 
 		UNIQUE (u_id, session_key)
 	);`
@@ -76,8 +76,8 @@ const (
 		p_id INTEGER,
 		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
-		FOREIGN KEY (u_id) REFERENCES users(id),
-		FOREIGN KEY (p_id) REFERENCES posts(pid),
+		FOREIGN KEY (u_id) REFERENCES users(id) ON DELETE CASCADE,
+		FOREIGN KEY (p_id) REFERENCES posts(pid) ON DELETE CASCADE,
 
 		UNIQUE (u_id, p_id)
 	);`
@@ -88,8 +88,8 @@ const (
 		p_id INTEGER,
 		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
-		FOREIGN KEY (u_id) REFERENCES users(id),
-		FOREIGN KEY (p_id) REFERENCES aeonposts(id),
+		FOREIGN KEY (u_id) REFERENCES users(id) ON DELETE CASCADE,
+		FOREIGN KEY (p_id) REFERENCES aeonposts(id) ON DELETE CASCADE,
 
 		UNIQUE (u_id, p_id)
 	);`
@@ -100,8 +100,8 @@ const (
 		p_id INTEGER,
 		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
-		FOREIGN KEY (u_id) REFERENCES users(id),
-		FOREIGN KEY (p_id) REFERENCES psycheposts(id)
+		FOREIGN KEY (u_id) REFERENCES users(id) ON DELETE CASCADE,
+		FOREIGN KEY (p_id) REFERENCES psycheposts(id) ON DELETE CASCADE,
 
 		UNIQUE (u_id, p_id)
 	);`
