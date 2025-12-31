@@ -24,3 +24,4 @@ go run .
 - [x] implement test agnosticism :P
 - [x] implement expiring sessions 
 - [x] implement post-login checks to redirect user to their presently active session upon multiple login attempts
+- [ ] make the database refresh run parallel to server execution
