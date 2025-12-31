@@ -89,7 +89,9 @@ const (
 		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
 		FOREIGN KEY (u_id) REFERENCES users(id),
-		FOREIGN KEY (p_id) REFERENCES aeonposts(id)
+		FOREIGN KEY (p_id) REFERENCES aeonposts(id),
+
+		UNIQUE (u_id, p_id)
 	);`
 
 	createPsycheFavoritesTable = `CREATE TABLE IF NOT EXISTS psychefavorites(
@@ -100,6 +102,8 @@ const (
 
 		FOREIGN KEY (u_id) REFERENCES users(id),
 		FOREIGN KEY (p_id) REFERENCES psycheposts(id)
+
+		UNIQUE (u_id, p_id)
 	);`
 )
 
