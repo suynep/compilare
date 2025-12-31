@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/suynep/compilare/crypt"
@@ -40,6 +41,7 @@ func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 		_, err = database.InsertUser(*regUser)
 
 		if err != nil {
+			log.Printf("\nError while inserting user: %v\n", err)
 			response := map[string]string{"message": "Username or Email already exists"}
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(response)
@@ -109,16 +111,38 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if check {
+
+			// subroutine to check session existence (if a session already exists for the current user, redirect to that, else create new)
+
+			preexistingSession, err := database.GetSessionByUserId(regUser.Id)
+
+			if err != nil {
+				log.Printf("No session exists for the user, creating new") // note that this error is occurring AFTER the user has provided valid creds
+				// this suffices, probably
+			} else {
+				w.Header().Add("Set-Cookie", fmt.Sprintf("%s=%s", COOKIE_NAME, preexistingSession.SessionKey))
+				w.WriteHeader(http.StatusOK)
+				response := map[string]string{"message": "Login Successful", "session_key": preexistingSession.SessionKey}
+
+				// go SessionPopper(preexistingSession)
+
+				json.NewEncoder(w).Encode(response)
+				return
+			}
+
 			newSession := types.Session{
 				SessionKey: uuid.NewString(),
 				UserId:     int(regUser.Id),
+				CreatedAt:  time.Now(),
 			}
 
 			_ = database.InsertSession(newSession)
 			w.Header().Add("Set-Cookie", fmt.Sprintf("%s=%s", COOKIE_NAME, newSession.SessionKey))
 			response := map[string]string{"message": "Login Successful", "session_key": newSession.SessionKey}
-
+			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(response)
+
+			go SessionPopper(newSession)
 
 		} else {
 			response := map[string]string{"message": "Login Failed"}
@@ -164,6 +188,18 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 				json.NewEncoder(w).Encode(response)
 			}
+
+			sessionFromDb, _ := database.GetSessionByUserId(user.Id)
+
+			if sessionFromDb.SessionKey != sessionKey.Value {
+				response := map[string]string{
+					"message": "You don't own this session!",
+				}
+				w.WriteHeader(http.StatusForbidden)
+				json.NewEncoder(w).Encode(response)
+				return
+			}
+
 			session := types.Session{
 				SessionKey: sessionKey.Value,
 				UserId:     int(user.Id),

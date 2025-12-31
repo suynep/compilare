@@ -2,7 +2,10 @@ package webapi
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/suynep/compilare/database"
@@ -106,6 +109,271 @@ func AuthTestRoute(w http.ResponseWriter, r *http.Request) {
 			"message": "Authentication Successful!",
 		}
 
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func FavoriteHackernewsPost(w http.ResponseWriter, r *http.Request) {
+	trimmed := strings.TrimRight(r.URL.Path, "/")
+
+	if strings.HasPrefix(trimmed, "/favorite/hackernews/") {
+		strId := strings.TrimPrefix(trimmed, "/favorite/hackernews/")
+		id, err := strconv.Atoi(strId)
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": fmt.Sprintf("%s is not a valid integer", strId),
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		// username := r.Header.Get("X-User")
+		sessionKey, err := r.Cookie("GO_SESSION_ID")
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "No Authentication",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		session, err := database.GetSessionByKey(sessionKey.Value)
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "No such session!",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		currentUser, err := database.GetUserById(int64(session.UserId))
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "Invalid Credentials",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		// fetch and check (two targets, one arrow)
+		post, err := database.ReadHackernewsPost(int64(id))
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "The post doesn't seem to exist...",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		// marshalledPostForBody, err := json.Marshal(post)
+
+		// if err != nil {
+		// 	log.Printf("\nError: %v\n", err)
+		// 	w.WriteHeader(http.StatusInternalServerError)
+		// 	response := map[string]string{
+		// 		"message": "Error while parsing post JSON",
+		// 	}
+		// 	json.NewEncoder(w).Encode(response)
+		// 	return
+		// }
+
+		if err = database.FavoriteHackernewsPost(int64(id), currentUser); err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "Error while inserting favorites to DB",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		response := map[string]any{
+			"message": "Favorite successful",
+			"post":    post,
+		}
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func FavoritePsychePost(w http.ResponseWriter, r *http.Request) {
+	trimmed := strings.TrimRight(r.URL.Path, "/")
+
+	if strings.HasPrefix(trimmed, "/favorite/psyche/") {
+		strId := strings.TrimPrefix(trimmed, "/favorite/psyche/")
+		id, err := strconv.Atoi(strId)
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": fmt.Sprintf("%s is not a valid integer", strId),
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		// username := r.Header.Get("X-User")
+		sessionKey, err := r.Cookie("GO_SESSION_ID")
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "No Authentication",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		session, err := database.GetSessionByKey(sessionKey.Value)
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "No such session!",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		currentUser, err := database.GetUserById(int64(session.UserId))
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "Invalid Credentials",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		// fetch and check (two targets, one arrow)
+		post, err := database.ReadPsychePost(int64(id))
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "The post doesn't seem to exist...",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		if err = database.FavoritePsychePost(int64(id), currentUser); err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "Error while inserting favorites to DB",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		response := map[string]any{
+			"message": "Favorite successful",
+			"post":    post,
+		}
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func FavoriteAeonPost(w http.ResponseWriter, r *http.Request) {
+	trimmed := strings.TrimRight(r.URL.Path, "/")
+	if strings.HasPrefix(trimmed, "/favorite/aeon/") {
+		strId := strings.TrimPrefix(trimmed, "/favorite/aeon/")
+		id, err := strconv.Atoi(strId)
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": fmt.Sprintf("%s is not a valid integer", strId),
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		// username := r.Header.Get("X-User")
+		sessionKey, err := r.Cookie("GO_SESSION_ID")
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "No Authentication",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		session, err := database.GetSessionByKey(sessionKey.Value)
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "No such session!",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		currentUser, err := database.GetUserById(int64(session.UserId))
+
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusForbidden)
+			response := map[string]string{
+				"message": "Invalid Credentials",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		// fetch and check (two targets, one arrow)
+		post, err := database.ReadAeonPost(int64(id))
+		if err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "The post doesn't seem to exist...",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		if err = database.FavoriteAeonPost(int64(id), currentUser); err != nil {
+			log.Printf("\nError: %v\n", err)
+			w.WriteHeader(http.StatusBadRequest)
+			response := map[string]string{
+				"message": "Error while inserting favorites to DB",
+			}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		response := map[string]any{
+			"message": "Favorite successful",
+			"post":    post,
+		}
 		json.NewEncoder(w).Encode(response)
 	}
 }

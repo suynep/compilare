@@ -22,5 +22,6 @@ go run .
 
 ### Todo
 - [x] implement test agnosticism :P
-- [ ] implement expiring sessions 
-- [ ] implement post-login checks to redirect user to their presently active session upon multiple login attempts
+- [x] implement expiring sessions 
+- [x] implement post-login checks to redirect user to their presently active session upon multiple login attempts
+- [x] make the database refresh run parallel to server execution

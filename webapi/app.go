@@ -26,8 +26,8 @@ func ConnectHandlers() {
 	http.Handle("/fetch/aeon", LogMiddleware(http.HandlerFunc(FetchAeonPosts)))
 	http.Handle("/fetch/aeon/", LogMiddleware(http.HandlerFunc(FetchAeonPosts)))
 
-	http.Handle("/fetch/psyche", LogMiddleware(AuthMiddleware(http.HandlerFunc(FetchPsychePosts)))) // test purposes
-	http.Handle("/fetch/psyche/", LogMiddleware(AuthMiddleware(http.HandlerFunc(FetchPsychePosts))))
+	http.Handle("/fetch/psyche", LogMiddleware(http.HandlerFunc(FetchPsychePosts)))
+	http.Handle("/fetch/psyche/", LogMiddleware(http.HandlerFunc(FetchPsychePosts)))
 
 	http.Handle("/auth/register", LogMiddleware(http.HandlerFunc(RegistrationHandler)))
 	http.Handle("/auth/register/", LogMiddleware(http.HandlerFunc(RegistrationHandler)))
@@ -37,6 +37,15 @@ func ConnectHandlers() {
 
 	http.Handle("/auth/logout", LogMiddleware(AuthMiddleware(http.HandlerFunc(LogoutHandler))))
 	http.Handle("/auth/logout/", LogMiddleware(AuthMiddleware(http.HandlerFunc(LogoutHandler))))
+
+	http.Handle("/favorite/hackernews/", LogMiddleware(AuthMiddleware(http.HandlerFunc(FavoriteHackernewsPost))))
+	http.Handle("/favorite/hackernews", LogMiddleware(AuthMiddleware(http.HandlerFunc(FavoriteHackernewsPost))))
+
+	http.Handle("/favorite/aeon/", LogMiddleware(AuthMiddleware(http.HandlerFunc(FavoriteAeonPost))))
+	http.Handle("/favorite/aeon", LogMiddleware(AuthMiddleware(http.HandlerFunc(FavoriteAeonPost))))
+
+	http.Handle("/favorite/psyche/", LogMiddleware(AuthMiddleware(http.HandlerFunc(FavoritePsychePost))))
+	http.Handle("/favorite/psyche", LogMiddleware(AuthMiddleware(http.HandlerFunc(FavoritePsychePost))))
 
 	http.Handle("/test/auth/", AuthMiddleware(http.HandlerFunc(AuthTestRoute)))
 	http.Handle("/test/auth", AuthMiddleware(http.HandlerFunc(AuthTestRoute)))

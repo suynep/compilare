@@ -65,9 +65,45 @@ const (
 		session_key TEXT,
 		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
-		FOREIGN KEY (u_id) REFERENCES users(id),
+		FOREIGN KEY (u_id) REFERENCES users(id) ON DELETE CASCADE,
 
 		UNIQUE (u_id, session_key)
+	);`
+
+	createHackernewsFavoritesTable = `CREATE TABLE IF NOT EXISTS hackernewsfavorites(
+		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+		u_id INTEGER,
+		p_id INTEGER,
+		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+		FOREIGN KEY (u_id) REFERENCES users(id) ON DELETE CASCADE,
+		FOREIGN KEY (p_id) REFERENCES posts(pid) ON DELETE CASCADE,
+
+		UNIQUE (u_id, p_id)
+	);`
+
+	createAeonFavoritesTable = `CREATE TABLE IF NOT EXISTS aeonfavorites(
+		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+		u_id INTEGER,
+		p_id INTEGER,
+		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+		FOREIGN KEY (u_id) REFERENCES users(id) ON DELETE CASCADE,
+		FOREIGN KEY (p_id) REFERENCES aeonposts(id) ON DELETE CASCADE,
+
+		UNIQUE (u_id, p_id)
+	);`
+
+	createPsycheFavoritesTable = `CREATE TABLE IF NOT EXISTS psychefavorites(
+		id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+		u_id INTEGER,
+		p_id INTEGER,
+		created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+		FOREIGN KEY (u_id) REFERENCES users(id) ON DELETE CASCADE,
+		FOREIGN KEY (p_id) REFERENCES psycheposts(id) ON DELETE CASCADE,
+
+		UNIQUE (u_id, p_id)
 	);`
 )
 
@@ -93,7 +129,7 @@ func InitDB() error {
 		}
 
 		// Create all tables
-		tables := []string{createPostsTable, createAeonPostsTable, createPsychePostsTable, createUserTable, createSessionTable}
+		tables := []string{createPostsTable, createAeonPostsTable, createPsychePostsTable, createUserTable, createSessionTable, createAeonFavoritesTable, createHackernewsFavoritesTable, createPsycheFavoritesTable}
 		for _, q := range tables {
 			if _, err = db.Exec(q); err != nil {
 				initErr = fmt.Errorf("failed to create table: %w", err)
