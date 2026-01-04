@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -32,6 +33,7 @@ type Model struct {
 	HNRowData      []types.WebPost
 	PerPage        int
 	CurrentPointer int
+	OpenLink       bool
 }
 
 func InitModel() Model {
@@ -83,6 +85,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.CurrentPointer = m.PerPage - 1
 			} else {
 				m.CurrentPointer = m.CurrentPointer - 1
+			}
+		case "enter", "l":
+			if len(m.APRowData) != 0 {
+				err := exec.Command("xdg-open", m.APRowData[m.CurrentPointer].Link).Run()
+				if err != nil {
+					panic(err)
+				}
+			} else if len(m.HNRowData) != 0 {
+				err := exec.Command("xdg-open", m.HNRowData[m.CurrentPointer].Url).Run()
+				if err != nil {
+					panic(err)
+				}
 			}
 		}
 	}
