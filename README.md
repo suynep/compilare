@@ -25,3 +25,4 @@ go run .
 - [x] implement expiring sessions 
 - [x] implement post-login checks to redirect user to their presently active session upon multiple login attempts
 - [x] make the database refresh run parallel to server execution
+- [ ] move the current global config vars to config.json
