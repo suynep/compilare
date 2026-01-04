@@ -49,6 +49,9 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	aeonPosts := database.ReadAeonPosts()
+	psychePosts := database.ReadPsychePosts()
+	hnPosts := database.ReadForMemoization("t")
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -56,16 +59,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "1", "a":
 			m.SelectedPane = 0
-			m.APRowData = append(m.APRowData, database.ReadAeonPosts()...)
+			if m.CurrentPointer+m.PerPage < len(aeonPosts) {
+				m.APRowData = aeonPosts[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			}
 			m.HNRowData = make([]types.WebPost, 0)
 		case "2", "p":
 			m.SelectedPane = 1
-			m.APRowData = append(m.APRowData, database.ReadPsychePosts()...)
+			if m.CurrentPointer+m.PerPage < len(psychePosts) {
+				m.APRowData = psychePosts[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			}
 			m.HNRowData = make([]types.WebPost, 0)
 		case "3", "h":
 			m.SelectedPane = 2
-			m.HNRowData = append(m.HNRowData, database.ReadForMemoization("t")...) // for testing purposes
+			if m.CurrentPointer+m.PerPage < len(hnPosts) {
+				m.HNRowData = hnPosts[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			}
 			m.APRowData = make([]types.Item, 0)
+		case "j":
+			m.CurrentPointer = (m.CurrentPointer + 1) % m.PerPage
+		case "k":
+			m.CurrentPointer = (m.CurrentPointer - 1) % m.PerPage
 		}
 	}
 
@@ -86,12 +99,20 @@ func (m Model) View() string {
 	s += "\n"
 
 	if len(m.APRowData) != 0 {
-		for _, rd := range m.APRowData {
-			s += fmt.Sprintf("%s %s %s\n", rd.Title, rd.Creator, rd.PubDate)
+		for i, rd := range m.APRowData {
+			if i == m.CurrentPointer {
+				s += fmt.Sprintf(">%s %s %s\n", rd.Title, rd.Creator, rd.PubDate)
+			} else {
+				s += fmt.Sprintf("%s %s %s\n", rd.Title, rd.Creator, rd.PubDate)
+			}
 		}
 	} else if len(m.HNRowData) != 0 {
-		for _, rd := range m.HNRowData {
-			s += fmt.Sprintf("%s %s %s\n", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))
+		for i, rd := range m.HNRowData {
+			if i == m.CurrentPointer {
+				s += fmt.Sprintf(">%s %s %s\n", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))
+			} else {
+				s += fmt.Sprintf("%s %s %s\n", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))
+			}
 		}
 
 	}
