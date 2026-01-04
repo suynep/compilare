@@ -6,6 +6,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/suynep/compilare/database"
 	"github.com/suynep/compilare/types"
 )
@@ -36,7 +37,7 @@ type Model struct {
 func InitModel() Model {
 	return Model{
 		AllPanes:       ALL_PANES,
-		SelectedPane:   AeonPane,
+		SelectedPane:   -1,
 		APRowData:      make([]types.Item, 0),
 		HNRowData:      make([]types.WebPost, 0),
 		PerPage:        10,
@@ -78,7 +79,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "j":
 			m.CurrentPointer = (m.CurrentPointer + 1) % m.PerPage
 		case "k":
-			m.CurrentPointer = (m.CurrentPointer - 1) % m.PerPage
+			if m.CurrentPointer <= 0 {
+				m.CurrentPointer = m.PerPage - 1
+			} else {
+				m.CurrentPointer = m.CurrentPointer - 1
+			}
 		}
 	}
 
@@ -90,7 +95,7 @@ func (m Model) View() string {
 	for i, pane := range ALL_PANES {
 		var paneDetails string
 		if i == m.SelectedPane {
-			paneDetails = fmt.Sprintf(">%s\n", pane)
+			paneDetails = ChosenStyleOp(fmt.Sprintf(">%s", pane)) + "\n"
 		} else {
 			paneDetails = pane + "\n"
 		}
@@ -101,7 +106,7 @@ func (m Model) View() string {
 	if len(m.APRowData) != 0 {
 		for i, rd := range m.APRowData {
 			if i == m.CurrentPointer {
-				s += fmt.Sprintf(">%s %s %s\n", rd.Title, rd.Creator, rd.PubDate)
+				s += ChosenStyleOp(fmt.Sprintf(">%s %s %s", rd.Title, rd.Creator, rd.PubDate)) + "\n"
 			} else {
 				s += fmt.Sprintf("%s %s %s\n", rd.Title, rd.Creator, rd.PubDate)
 			}
@@ -109,7 +114,7 @@ func (m Model) View() string {
 	} else if len(m.HNRowData) != 0 {
 		for i, rd := range m.HNRowData {
 			if i == m.CurrentPointer {
-				s += fmt.Sprintf(">%s %s %s\n", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))
+				s += ChosenStyleOp(fmt.Sprintf(">%s %s %s", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))) + "\n"
 			} else {
 				s += fmt.Sprintf("%s %s %s\n", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))
 			}
@@ -125,4 +130,12 @@ func BuildUi() {
 		fmt.Printf("Error while running!\n")
 		os.Exit(1)
 	}
+}
+
+// styles
+
+func ChosenStyleOp(msg string) string {
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#00bb00"))
+	style = style.SetString(msg)
+	return style.String()
 }
