@@ -120,7 +120,7 @@ func (m Model) View() string {
 	if len(m.APRowData) != 0 {
 		for i, rd := range m.APRowData {
 			if i == m.CurrentPointer {
-				s += ChosenStyleOp(fmt.Sprintf(">%s %s %s", rd.Title, rd.Creator, rd.PubDate)) + "\n"
+				s += ArticleSelectStyleOp(fmt.Sprintf(">%s %s %s", rd.Title, rd.Creator, rd.PubDate)) + "\n"
 			} else {
 				s += fmt.Sprintf("%s %s %s\n", rd.Title, rd.Creator, rd.PubDate)
 			}
@@ -128,7 +128,7 @@ func (m Model) View() string {
 	} else if len(m.HNRowData) != 0 {
 		for i, rd := range m.HNRowData {
 			if i == m.CurrentPointer {
-				s += ChosenStyleOp(fmt.Sprintf(">%s %s %s", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))) + "\n"
+				s += ArticleSelectStyleOp(fmt.Sprintf(">%s %s %s", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))) + "\n"
 			} else {
 				s += fmt.Sprintf("%s %s %s\n", rd.Title, rd.By, time.Unix(rd.Time, 0).Format(time.UnixDate))
 			}
@@ -150,6 +150,12 @@ func BuildUi() {
 
 func ChosenStyleOp(msg string) string {
 	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#00bb00"))
+	style = style.SetString(msg)
+	return style.String()
+}
+
+func ArticleSelectStyleOp(msg string) string {
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#f5dd42"))
 	style = style.SetString(msg)
 	return style.String()
 }
