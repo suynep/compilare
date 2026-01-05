@@ -48,7 +48,7 @@ func InitModel() Model {
 	HN_POSTS = database.ReadForMemoization("t") // arbitrary choice of top posts as of now
 	return Model{
 		AllPanes:       ALL_PANES,
-		SelectedPane:   -1,
+		SelectedPane:   -1, // select none, initially
 		APRowData:      make([]types.Item, 0),
 		HNRowData:      make([]types.WebPost, 0),
 		PerPage:        10,
@@ -109,22 +109,39 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case "n":
-			m.StartIndex = m.StartIndex + m.PerPage
+
 			switch m.SelectedPane {
 			case 0:
 				if m.StartIndex+m.PerPage <= len(AEON_POSTS) {
+					m.StartIndex = m.StartIndex + m.PerPage // !fix this: page indication goes 1 above the actual
+				}
+				if m.StartIndex+m.PerPage <= len(AEON_POSTS) {
 					m.APRowData = AEON_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+				} else {
+					m.APRowData = AEON_POSTS[m.StartIndex:]
 				}
 				m.HNRowData = make([]types.WebPost, 0)
 			case 1:
 				if m.StartIndex+m.PerPage <= len(PSYCHE_POSTS) {
-					m.APRowData = PSYCHE_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+					m.StartIndex = m.StartIndex + m.PerPage // !fix this: page indication goes 1 above the actual
 				}
+				if m.StartIndex+m.PerPage <= len(PSYCHE_POSTS) {
+					m.APRowData = PSYCHE_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+				} else {
+					m.APRowData = PSYCHE_POSTS[m.StartIndex:]
+				}
+
 				m.HNRowData = make([]types.WebPost, 0)
 			case 2:
 				if m.StartIndex+m.PerPage <= len(HN_POSTS) {
-					m.HNRowData = HN_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+					m.StartIndex = m.StartIndex + m.PerPage // !fix this: page indication goes 1 above the actual
 				}
+				if m.StartIndex+m.PerPage <= len(HN_POSTS) {
+					m.HNRowData = HN_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+				} else {
+					m.HNRowData = HN_POSTS[m.StartIndex:]
+				}
+
 				m.APRowData = make([]types.Item, 0)
 
 			}
@@ -187,6 +204,9 @@ func (m Model) View() string {
 		}
 
 	}
+
+	s += "\n\n" + "Page: " + CurrentPageStyleOp(fmt.Sprintf("%d", m.StartIndex/m.PerPage))
+
 	return s
 }
 
@@ -207,6 +227,12 @@ func ChosenStyleOp(msg string) string {
 
 func ArticleSelectStyleOp(msg string) string {
 	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#f5dd42"))
+	style = style.SetString(msg)
+	return style.String()
+}
+
+func CurrentPageStyleOp(msg string) string {
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#000000")).Background(lipgloss.Color("#ffffff"))
 	style = style.SetString(msg)
 	return style.String()
 }
