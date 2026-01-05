@@ -36,9 +36,10 @@ type Model struct {
 	APRowData      []types.Item // Aeon/Psyche Row Data
 	HNRowData      []types.WebPost
 	PerPage        int
+	StartIndex     int
+	EndIndex       int
 	CurrentPointer int
 	OpenLink       bool
-	CurrentPage    int
 }
 
 func InitModel() Model {
@@ -52,6 +53,7 @@ func InitModel() Model {
 		HNRowData:      make([]types.WebPost, 0),
 		PerPage:        10,
 		CurrentPointer: 0,
+		StartIndex:     0,
 	}
 }
 
@@ -60,28 +62,30 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		case "1", "a":
+			m.StartIndex = 0 // reset page nav
 			m.SelectedPane = 0
-			if m.CurrentPointer+m.PerPage < len(AEON_POSTS) {
-				m.APRowData = AEON_POSTS[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			if m.StartIndex+m.PerPage < len(AEON_POSTS) {
+				m.APRowData = AEON_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
 			}
 			m.HNRowData = make([]types.WebPost, 0)
 		case "2", "p":
+			m.StartIndex = 0 // reset page nav
 			m.SelectedPane = 1
-			if m.CurrentPointer+m.PerPage < len(PSYCHE_POSTS) {
-				m.APRowData = PSYCHE_POSTS[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			if m.StartIndex+m.PerPage < len(PSYCHE_POSTS) {
+				m.APRowData = PSYCHE_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
 			}
 			m.HNRowData = make([]types.WebPost, 0)
 		case "3", "h":
+			m.StartIndex = 0 // reset page nav
 			m.SelectedPane = 2
-			if m.CurrentPointer+m.PerPage < len(HN_POSTS) {
-				m.HNRowData = HN_POSTS[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			if m.StartIndex+m.PerPage < len(HN_POSTS) {
+				m.HNRowData = HN_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
 			}
 			m.APRowData = make([]types.Item, 0)
 		case "j":
@@ -105,16 +109,47 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case "n":
-			// switch to lastPostIndex + perPage
+			m.StartIndex = m.StartIndex + m.PerPage
 			switch m.SelectedPane {
-			case 3:
-				if len(HN_POSTS) > m.CurrentPointer+m.PerPage {
-					m.HNRowData = HN_POSTS[m.CurrentPointer : m.CurrentPointer+m.PerPage]
-				} else {
-					m.HNRowData = HN_POSTS[m.CurrentPointer:]
+			case 0:
+				if m.StartIndex+m.PerPage <= len(AEON_POSTS) {
+					m.APRowData = AEON_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
 				}
-			}
+				m.HNRowData = make([]types.WebPost, 0)
+			case 1:
+				if m.StartIndex+m.PerPage <= len(PSYCHE_POSTS) {
+					m.APRowData = PSYCHE_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+				}
+				m.HNRowData = make([]types.WebPost, 0)
+			case 2:
+				if m.StartIndex+m.PerPage <= len(HN_POSTS) {
+					m.HNRowData = HN_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+				}
+				m.APRowData = make([]types.Item, 0)
 
+			}
+		case "P":
+			if m.StartIndex > 0 {
+				m.StartIndex = m.StartIndex - m.PerPage
+			}
+			switch m.SelectedPane {
+			case 0:
+				if m.StartIndex+m.PerPage <= len(AEON_POSTS) {
+					m.APRowData = AEON_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+				}
+				m.HNRowData = make([]types.WebPost, 0)
+			case 1:
+				if m.StartIndex+m.PerPage <= len(PSYCHE_POSTS) {
+					m.APRowData = PSYCHE_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+				}
+				m.HNRowData = make([]types.WebPost, 0)
+			case 2:
+				if m.StartIndex+m.PerPage <= len(HN_POSTS) {
+					m.HNRowData = HN_POSTS[m.StartIndex : m.StartIndex+m.PerPage]
+				}
+				m.APRowData = make([]types.Item, 0)
+
+			}
 		}
 	}
 
@@ -164,9 +199,8 @@ func BuildUi() {
 }
 
 // styles
-
 func ChosenStyleOp(msg string) string {
-	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#00bb00"))
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#00bb00")).Background(lipgloss.Color("#ffffff"))
 	style = style.SetString(msg)
 	return style.String()
 }
