@@ -26,7 +26,9 @@ type HNResponse struct {
 type Config struct {
 	Run struct {
 		Time time.Time `json:"time,omitempty"`
-	} `json:"run,omitempty"`
+	} `json:"run"`
+	SessionExpiration time.Time `json:"session_expiration,omitempty"`
+	StorySaveDelta    time.Time `json:"story_save_delta,omitempty"`
 }
 
 type WebPost struct {

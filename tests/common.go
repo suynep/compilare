@@ -58,7 +58,7 @@ func TestTopStoriesDatabaseSaves() {
 }
 
 func TestReadForMemoization() {
-	database.ReadForMemoization("t")
+	fmt.Println(database.ReadForMemoization("t"))
 }
 
 func TestWebApiServer() {
