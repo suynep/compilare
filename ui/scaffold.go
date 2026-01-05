@@ -18,6 +18,10 @@ const (
 	HackernewsPane
 )
 
+var AEON_POSTS []types.Item = make([]types.Item, 0)
+var PSYCHE_POSTS []types.Item = make([]types.Item, 0)
+var HN_POSTS []types.WebPost = make([]types.WebPost, 0)
+
 var ALL_PANES = []string{"Aeon", "Psyche", "Hackernews"}
 
 type Data struct {
@@ -34,9 +38,13 @@ type Model struct {
 	PerPage        int
 	CurrentPointer int
 	OpenLink       bool
+	CurrentPage    int
 }
 
 func InitModel() Model {
+	AEON_POSTS = database.ReadAeonPosts()
+	PSYCHE_POSTS = database.ReadPsychePosts()
+	HN_POSTS = database.ReadForMemoization("t") // arbitrary choice of top posts as of now
 	return Model{
 		AllPanes:       ALL_PANES,
 		SelectedPane:   -1,
@@ -52,9 +60,7 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	aeonPosts := database.ReadAeonPosts()
-	psychePosts := database.ReadPsychePosts()
-	hnPosts := database.ReadForMemoization("t")
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -62,20 +68,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "1", "a":
 			m.SelectedPane = 0
-			if m.CurrentPointer+m.PerPage < len(aeonPosts) {
-				m.APRowData = aeonPosts[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			if m.CurrentPointer+m.PerPage < len(AEON_POSTS) {
+				m.APRowData = AEON_POSTS[m.CurrentPointer : m.CurrentPointer+m.PerPage]
 			}
 			m.HNRowData = make([]types.WebPost, 0)
 		case "2", "p":
 			m.SelectedPane = 1
-			if m.CurrentPointer+m.PerPage < len(psychePosts) {
-				m.APRowData = psychePosts[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			if m.CurrentPointer+m.PerPage < len(PSYCHE_POSTS) {
+				m.APRowData = PSYCHE_POSTS[m.CurrentPointer : m.CurrentPointer+m.PerPage]
 			}
 			m.HNRowData = make([]types.WebPost, 0)
 		case "3", "h":
 			m.SelectedPane = 2
-			if m.CurrentPointer+m.PerPage < len(hnPosts) {
-				m.HNRowData = hnPosts[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+			if m.CurrentPointer+m.PerPage < len(HN_POSTS) {
+				m.HNRowData = HN_POSTS[m.CurrentPointer : m.CurrentPointer+m.PerPage]
 			}
 			m.APRowData = make([]types.Item, 0)
 		case "j":
@@ -98,6 +104,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					panic(err)
 				}
 			}
+		case "n":
+			// switch to lastPostIndex + perPage
+			switch m.SelectedPane {
+			case 3:
+				if len(HN_POSTS) > m.CurrentPointer+m.PerPage {
+					m.HNRowData = HN_POSTS[m.CurrentPointer : m.CurrentPointer+m.PerPage]
+				} else {
+					m.HNRowData = HN_POSTS[m.CurrentPointer:]
+				}
+			}
+
 		}
 	}
 
